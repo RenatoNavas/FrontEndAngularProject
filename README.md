@@ -1,6 +1,6 @@
 # Proyecto CRUD Bodegas y Productos
 
-Este proyecto está diseñado para evaluar el conocimiento en Angular y .NET en un ejercicio de un CRUD. A continuación se incluyen los enlaces a los repositorios públicos requeridos para el desarrollo y funcionamiento de este proyecto.
+Este proyecto está diseñado en Angular y .NET en un ejercicio de un CRUD. A continuación se incluyen los enlaces a los repositorios públicos requeridos para el desarrollo y funcionamiento de este proyecto.
 
 ## Enlaces a los Repositorios Públicos
 
