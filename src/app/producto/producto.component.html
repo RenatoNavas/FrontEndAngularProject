@@ -1,35 +1,40 @@
 <div class="container" style="max-width: 80%; margin: 20px auto;">
     <h2>CRUD de Productos</h2>
 
-    <!-- Filtros -->
-    <div class="filter-container" style="margin-bottom: 20px; display: flex; gap: 20px;">
+    <div class="filter-container" style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
         <div class="p-field" style="flex: 1;">
             <label for="stockMinimo">Stock Mínimo:</label>
-            <input id="stockMinimo" type="number" pInputText [(ngModel)]="stockMinimo" placeholder="Ingrese stock mínimo" style="width: 100%;" />
+            <input id="stockMinimo" type="number" pInputText [(ngModel)]="stockMinimo" placeholder="Ingrese stock mínimo"  />
         </div>
         <div class="p-field" style="flex: 1;">
             <label for="nombreFiltro">Nombre:</label>
-            <input id="nombreFiltro" type="text" pInputText [(ngModel)]="nombreFiltro" placeholder="Ingrese nombre del producto" style="width: 100%;" />
+            <input id="nombreFiltro" type="text" pInputText [(ngModel)]="nombreFiltro" placeholder="Ingrese nombre del producto"  />
+        </div>
+        <div class="p-field" style="flex: 1;">
+            <label for="fechaIngresoFiltro">Fecha de Ingreso (antes de):</label>
+            <p-calendar id="fechaIngresoFiltro" [(ngModel)]="fechaIngresoFiltro" dateFormat="dd/mm/yy" placeholder="Seleccione una fecha"  appendTo="body"></p-calendar>
+        </div>
+        <div class="p-field" style="flex: 1;">
+            <label for="bodegaFiltro">Nombre de Bodega:</label>
+            <p-dropdown id="bodegaFiltro" [(ngModel)]="bodegaFiltro" [options]="bodegasOpciones" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega" appendTo="body"></p-dropdown>
         </div>
     </div>
     <div style="margin-bottom: 20px; text-align: center;">
-        <button pButton label="Aplicar Filtros" (click)="aplicarFiltros()" class="p-button-info" style="width: 100%;"></button>
+        <button pButton label="Aplicar Filtros" (click)="aplicarFiltros()" class="p-button-info"></button>
     </div>
 
-    <!-- Crear Producto -->
     <div class="button-container" style="margin-bottom: 20px; text-align: center;">
         <button pButton label="Crear Producto" icon="pi pi-plus" (click)="mostrarDialogoCrear()" class="p-button-success"></button>
     </div>
 
-    <!-- Tabla de Productos -->
-    <p-table [value]="productosFiltrados" styleClass="p-datatable-gridlines" style="width: 100%;">
+    <p-table [value]="productosFiltrados" styleClass="p-datatable-gridlines" [paginator]="true" [rows]="10">
         <ng-template pTemplate="header">
             <tr>
                 <th>Nombre</th>
                 <th>Precio</th>
                 <th>Stock</th>
                 <th>Fecha de Ingreso</th>
-                <th>Bodega</th>
+                <th>Nombre de Bodega</th>
                 <th>Acciones</th>
             </tr>
         </ng-template>
@@ -39,7 +44,7 @@
                 <td>{{ producto.precio | currency }}</td>
                 <td>{{ producto.stock }}</td>
                 <td>{{ producto.fechaIngreso | date: 'dd-MM-yyyy' }}</td>
-                <td>{{ producto.bodega.nombre }}</td>
+                <td>{{ producto.bodega?.nombre }}</td>
                 <td>
                     <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning" (click)="onEditar(producto)" style="margin-right: 10px;"></button>
                     <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="mostrarDialogoEliminar(producto)" style="margin-left: 10px;"></button>
@@ -48,44 +53,35 @@
         </ng-template>
     </p-table>
 
-    <!-- Paginación -->
-    <div class="pagination-container" style="text-align: center; margin-top: 20px;">
-        <button pButton icon="pi pi-angle-double-left" (click)="cambiarPagina(-1)" [disabled]="paginatorHandler.pageCount === 0" style="margin-right: 10px;"></button>
-        <span>{{ paginatorHandler.pageCount / paginatorHandler.rows + 1 }} / {{ totalPages }}</span>
-        <button pButton icon="pi pi-angle-double-right" (click)="cambiarPagina(1)" [disabled]="paginatorHandler.pageCount + paginatorHandler.rows >= paginatorHandler.totalCount" style="margin-left: 10px;"></button>
-    </div>
-
-    <!-- Diálogo para Crear/Editar Producto -->
     <p-dialog header="{{ editMode ? 'Editar Producto' : 'Crear Producto' }}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '40vw'}">
         <div class="p-fluid">
-          <div class="p-field">
-            <label for="nombre">Nombre</label>
-            <input id="nombre" type="text" pInputText [(ngModel)]="productoSeleccionado.nombre" />
-          </div>
-          <div class="p-field">
-            <label for="precio">Precio</label>
-            <input id="precio" type="number" pInputText [(ngModel)]="productoSeleccionado.precio" />
-          </div>
-          <div class="p-field">
-            <label for="stock">Stock</label>
-            <input id="stock" type="number" pInputText [(ngModel)]="productoSeleccionado.stock" />
-          </div>
-          <div class="p-field">
-            <label for="fechaIngreso">Fecha de Ingreso</label>
-            <p-calendar id="fechaIngreso" [(ngModel)]="productoSeleccionado.fechaIngreso" dateFormat="dd/mm/yy" placeholder="Seleccione una fecha" style="width: 100%;" appendTo="body"></p-calendar>
-          </div>
-          <div class="p-field">
-            <label for="bodega">Bodega</label>
-            <p-dropdown id="bodega" [(ngModel)]="productoSeleccionado.bodegaId" [options]="bodegas" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega" class="w-100" appendTo="body"></p-dropdown>
-          </div>
+            <div class="p-field">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" pInputText [(ngModel)]="productoSeleccionado.nombre" />
+            </div>
+            <div class="p-field">
+                <label for="precio">Precio</label>
+                <input id="precio" type="number" pInputText [(ngModel)]="productoSeleccionado.precio" />
+            </div>
+            <div class="p-field">
+                <label for="stock">Stock</label>
+                <input id="stock" type="number" pInputText [(ngModel)]="productoSeleccionado.stock" />
+            </div>
+            <div class="p-field">
+                <label for="fechaIngreso">Fecha de Ingreso</label>
+                <p-calendar id="fechaIngreso" [(ngModel)]="productoSeleccionado.fechaIngreso" dateFormat="dd/mm/yy" placeholder="Seleccione una fecha" appendTo="body"></p-calendar>
+            </div>
+            <div class="p-field">
+                <label for="bodega">Nombre de Bodega</label>
+                <p-dropdown id="bodega" [(ngModel)]="productoSeleccionado.bodegaId" [options]="bodegas" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega" class="w-100" appendTo="body"></p-dropdown>
+            </div>
         </div>
         <p-footer>
-          <button pButton label="Guardar" icon="pi pi-check" (click)="guardarProducto()" class="p-button-success"></button>
-          <button pButton label="Cancelar" icon="pi pi-times" (click)="displayDialog = false" class="p-button-secondary"></button>
+            <button pButton label="Guardar" icon="pi pi-check" (click)="guardarProducto()" class="p-button-success"></button>
+            <button pButton label="Cancelar" icon="pi pi-times" (click)="displayDialog = false" class="p-button-secondary"></button>
         </p-footer>
-      </p-dialog>
+    </p-dialog>
 
-    <!-- Diálogo de Confirmación de Eliminación -->
     <p-dialog header="Confirmar Eliminación" [(visible)]="displayDialogEliminar" [modal]="true" [closable]="false" [style]="{width: '25vw'}">
         <div class="confirmation-content" style="margin-bottom: 20px;">
             <span>¿Estás seguro de eliminar <b>{{ productoSeleccionado.nombre }}</b>?</span>
