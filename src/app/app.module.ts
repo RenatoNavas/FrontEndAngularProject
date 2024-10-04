@@ -3,9 +3,9 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';  // Importa FormsModule y ReactiveFormsModule
-
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
@@ -24,13 +24,15 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';  
 import { InputTextModule } from 'primeng/inputtext';  
 import { ToastModule } from 'primeng/toast';  
-import { MessageService } from 'primeng/api';  
+import { MessageService } from 'primeng/api';
+import { BodegaComponent } from './bodega/bodega.component';  
 
 @NgModule({
     declarations: [
         AppComponent,
         NotfoundComponent,
-        ProductoComponent  
+        ProductoComponent,
+        BodegaComponent  
     ],
     imports: [
         BrowserModule,
@@ -44,7 +46,9 @@ import { MessageService } from 'primeng/api';
         ButtonModule,  
         DialogModule,  
         InputTextModule, 
-        ToastModule 
+        ToastModule,
+        CalendarModule,
+        DropdownModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

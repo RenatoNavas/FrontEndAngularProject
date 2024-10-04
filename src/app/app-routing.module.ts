@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { NotfoundComponent } from './demo/components/notfound/notfound.component';
 import { AppLayoutComponent } from "./layout/app.layout.component";
 import { ProductoComponent } from './producto/producto.component';  
+import { BodegaComponent } from './bodega/bodega.component';  
 
 @NgModule({
     imports: [
@@ -16,7 +17,8 @@ import { ProductoComponent } from './producto/producto.component';
                     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
                     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
                     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) },
-                    { path: 'producto', component: ProductoComponent } 
+                    { path: 'producto', component: ProductoComponent } ,
+                    { path: 'bodega', component: BodegaComponent } 
                 ]
             },
             { path: 'auth', loadChildren: () => import('./demo/components/auth/auth.module').then(m => m.AuthModule) },

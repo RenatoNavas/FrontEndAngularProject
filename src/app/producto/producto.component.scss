@@ -1,29 +1,34 @@
 .container {
     max-width: 600px;
     margin: 20px auto;
-  
-    form {
-      margin-bottom: 20px;
+
+    .filter-container,
+    .button-container,
+    .pagination-container {
+        text-align: center;
     }
-  
-    table {
-      width: 100%;
-      border-collapse: collapse;
-  
-      th, td {
-        padding: 10px;
-        border: 1px solid #ddd;
-      }
-  
-      button {
-        background: none;
-        border: none;
-        cursor: pointer;
-      }
-  
-      .pi {
-        font-size: 1.2em;
-      }
+
+    p-table {
+        width: 100%;
     }
-  }
-  
+
+    .p-field {
+        margin-bottom: 1rem;
+    }
+
+    p-dialog {
+        .p-fluid .p-field {
+            width: 100%;
+        }
+    }
+
+    .p-button {
+        margin: 0 5px;
+    }
+
+    .confirmation-content {
+        text-align: center;
+        font-size: 1rem;
+        margin: 1rem 0;
+    }
+}

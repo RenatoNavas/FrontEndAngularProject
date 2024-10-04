@@ -1,0 +1,57 @@
+<div class="container" style="max-width: 80%; margin: 20px auto;">
+    <h2>CRUD de Bodegas</h2>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <button pButton label="Crear Bodega" icon="pi pi-plus" (click)="mostrarDialogoCrear()" class="p-button-success"></button>
+    </div>
+
+    <p-table [value]="bodegas" styleClass="p-datatable-gridlines" style="width: 100%;">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-bodega>
+            <tr>
+                <td>{{ bodega.nombre }}</td>
+                <td>{{ bodega.descripcion }}</td>
+                <td>
+                    <button pButton icon="pi pi-pencil" (click)="onEditar(bodega)" class="p-button-rounded p-button-warning" style="margin-right: 10px;"></button>
+                    <button pButton icon="pi pi-trash" (click)="mostrarDialogoEliminar(bodega)" class="p-button-rounded p-button-danger"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Diálogo Crear/Editar Bodega -->
+    <p-dialog header="{{ editMode ? 'Editar Bodega' : 'Crear Bodega' }}" [(visible)]="displayDialog" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+        <div class="p-fluid">
+            <div class="p-field">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" pInputText [(ngModel)]="bodegaSeleccionada.nombre" />
+            </div>
+            <div class="p-field">
+                <label for="descripcion">Descripción</label>
+                <input id="descripcion" type="text" pInputText [(ngModel)]="bodegaSeleccionada.descripcion" />
+            </div>
+        </div>
+        <p-footer>
+            <button pButton label="Guardar" icon="pi pi-check" (click)="guardarBodega()" class="p-button-success"></button>
+            <button pButton label="Cancelar" icon="pi pi-times" (click)="displayDialog = false" class="p-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+
+    <!-- Diálogo Confirmación de Eliminación -->
+    <p-dialog header="Eliminar Bodega" [(visible)]="displayDialogEliminar" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+        <div class="p-fluid">
+            <p>¿Deseas eliminar esta bodega? Selecciona otra bodega para reasignar los productos.</p>
+            <p-dropdown [(ngModel)]="nuevaBodegaId" [options]="bodegasReasignar" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega"></p-dropdown>
+        </div>
+        <p-footer>
+            <button pButton label="Eliminar" icon="pi pi-check" (click)="eliminarBodega()" class="p-button-danger"></button>
+            <button pButton label="Cancelar" icon="pi pi-times" (click)="cerrarDialogoEliminar()" class="p-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>

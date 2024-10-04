@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProductoService } from './producto.service';
 import { Producto } from './producto.model';
 import { MessageService } from 'primeng/api';
-import { FilterHandler } from '../filter/FilterHandler';
-import { PaginatorHandler } from '../pagination/PaginatorHandler';
-import { ColumnHeader } from '../pagination/ColumnHeader';
-import { PageList } from '../pagination/PageList';
+import { Bodega } from '../bodega//bodega.model';
+import { BodegaService } from '../bodega/bodega.service';
 
 @Component({
   selector: 'app-producto',
@@ -14,65 +12,48 @@ import { PageList } from '../pagination/PageList';
   providers: [MessageService]
 })
 export class ProductoComponent implements OnInit {
-
   productos: Producto[] = [];
   productosFiltrados: Producto[] = [];
-  productoSeleccionado: Producto = { id: 0, nombre: '', precio: 0, stock: 0 };
+  bodegas: Bodega[] = [];
+  productoSeleccionado: Producto = { id: 0, nombre: '', precio: 0, stock: 0, fechaIngreso: new Date(), bodegaId: 0 };
   displayDialog: boolean = false;
   displayDialogEliminar: boolean = false;
   editMode: boolean = false;
-
+  
   stockMinimo: number = 0;
   nombreFiltro: string = '';
+  paginatorHandler = { pageCount: 0, rows: 10, totalCount: 0 }; // Definición básica del paginador
 
-  paginatorHandler = new PaginatorHandler<Producto>(this.cargarProductosFiltrados.bind(this));
-  filterHandler = new FilterHandler();
-
-  columns: ColumnHeader[] = [
-    { field: 'nombre', header: 'Nombre', type: 'text', filter: true },
-    { field: 'precio', header: 'Precio', type: 'text', filter: true },
-    { field: 'stock', header: 'Stock', type: 'text', filter: true }
-  ];
-
-  constructor(private productoService: ProductoService, private messageService: MessageService) {}
+  constructor(private productoService: ProductoService, private bodegaService: BodegaService, private messageService: MessageService) {}
 
   ngOnInit(): void {
-    this.paginatorHandler.init();
-    this.cargarProductosFiltrados({}); 
+    this.cargarProductos();
+    this.cargarBodegas();
   }
 
-
-  cargarProductosFiltrados(query: Record<string, any>): Promise<PageList<Producto>> {
-
-    this.filterHandler.setFilters(query);
-    const filtros = this.filterHandler.getFilters();
-
-    filtros['pageSize'] = this.paginatorHandler.rows;  
-    filtros['page'] = this.paginatorHandler.pageCount / this.paginatorHandler.rows + 1;
-
-    return this.productoService.getProductos(filtros).toPromise().then(data => {
-      if (data) {
-        this.productosFiltrados = data.items; 
-        this.paginatorHandler.page.totalCount = data.totalCount;  
-      }
-      return new PageList<Producto>();  
+  cargarProductos(): void {
+    this.productoService.getAll().subscribe(productos => {
+      this.productos = productos;
+      this.productosFiltrados = productos;
+      this.paginatorHandler.totalCount = productos.length;
     });
   }
 
+  cargarBodegas(): void {
+    this.bodegaService.getAll().subscribe(bodegas => {
+      this.bodegas = bodegas;
+    });
+  }
 
   aplicarFiltros(): void {
-    const filtros = {
-      stockMinimo: this.stockMinimo,
-      nombre: this.nombreFiltro
-    };
-
-
-    this.paginatorHandler.setFilters(filtros);
-    this.paginatorHandler.reload();  
+    this.productosFiltrados = this.productos.filter(producto => 
+      producto.stock >= this.stockMinimo && 
+      producto.nombre.toLowerCase().includes(this.nombreFiltro.toLowerCase())
+    );
   }
 
   mostrarDialogoCrear(): void {
-    this.productoSeleccionado = { id: 0, nombre: '', precio: 0, stock: 0 };
+    this.productoSeleccionado = { id: 0, nombre: '', precio: 0, stock: 0, fechaIngreso: new Date(), bodegaId: 0 };
     this.editMode = false;
     this.displayDialog = true;
   }
@@ -85,17 +66,16 @@ export class ProductoComponent implements OnInit {
 
   guardarProducto(): void {
     if (this.editMode) {
-      this.productoService.actualizarProducto(this.productoSeleccionado.id, this.productoSeleccionado).subscribe(() => {
+      this.productoService.update(this.productoSeleccionado.id, this.productoSeleccionado).subscribe(() => {
         this.messageService.add({ severity: 'success', summary: 'Producto Actualizado' });
-        this.paginatorHandler.reload(); 
-        this.cerrarDialogo();
+        this.cargarProductos();
+        this.displayDialog = false;
       });
     } else {
-
-      this.productoService.crearProducto(this.productoSeleccionado).subscribe(() => {
+      this.productoService.create(this.productoSeleccionado).subscribe(() => {
         this.messageService.add({ severity: 'success', summary: 'Producto Creado' });
-        this.paginatorHandler.reload(); 
-        this.cerrarDialogo();
+        this.cargarProductos();
+        this.displayDialog = false;
       });
     }
   }
@@ -106,10 +86,10 @@ export class ProductoComponent implements OnInit {
   }
 
   confirmarEliminar(): void {
-    this.productoService.eliminarProducto(this.productoSeleccionado.id).subscribe(() => {
+    this.productoService.delete(this.productoSeleccionado.id).subscribe(() => {
       this.messageService.add({ severity: 'warn', summary: 'Producto Eliminado' });
-      this.paginatorHandler.reload();  
-      this.cerrarDialogoEliminar();
+      this.cargarProductos();
+      this.displayDialogEliminar = false;
     });
   }
 
@@ -123,13 +103,13 @@ export class ProductoComponent implements OnInit {
 
   cambiarPagina(direccion: number): void {
     const newPageCount = this.paginatorHandler.pageCount + (direccion * this.paginatorHandler.rows);
-    if (newPageCount >= 0 && newPageCount < this.paginatorHandler.page.totalCount) {
+    if (newPageCount >= 0 && newPageCount < this.paginatorHandler.totalCount) {
       this.paginatorHandler.pageCount = newPageCount;
-      this.paginatorHandler.reload();
+      this.aplicarFiltros(); // Reaplica los filtros después de cambiar de página
     }
   }
 
   get totalPages(): number {
-    return Math.ceil(this.paginatorHandler.page.totalCount / this.paginatorHandler.rows);
+    return Math.ceil(this.paginatorHandler.totalCount / this.paginatorHandler.rows);
   }
 }
