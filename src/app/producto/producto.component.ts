@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProductoService } from './producto.service';
 import { Producto } from './producto.model';
 import { MessageService } from 'primeng/api';
-import { Bodega } from '../bodega//bodega.model';
+import { Bodega } from '../bodega/bodega.model';
 import { BodegaService } from '../bodega/bodega.service';
 
 @Component({
@@ -22,9 +22,13 @@ export class ProductoComponent implements OnInit {
   
   stockMinimo: number = 0;
   nombreFiltro: string = '';
-  paginatorHandler = { pageCount: 0, rows: 10, totalCount: 0 }; // Definición básica del paginador
+  paginatorHandler = { pageCount: 0, rows: 10, totalCount: 0 };
 
-  constructor(private productoService: ProductoService, private bodegaService: BodegaService, private messageService: MessageService) {}
+  constructor(
+    private productoService: ProductoService,
+    private bodegaService: BodegaService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.cargarProductos();
@@ -72,6 +76,7 @@ export class ProductoComponent implements OnInit {
         this.displayDialog = false;
       });
     } else {
+      console.log("Enviando bodegaId:", this.productoSeleccionado.bodegaId);
       this.productoService.create(this.productoSeleccionado).subscribe(() => {
         this.messageService.add({ severity: 'success', summary: 'Producto Creado' });
         this.cargarProductos();
@@ -105,7 +110,7 @@ export class ProductoComponent implements OnInit {
     const newPageCount = this.paginatorHandler.pageCount + (direccion * this.paginatorHandler.rows);
     if (newPageCount >= 0 && newPageCount < this.paginatorHandler.totalCount) {
       this.paginatorHandler.pageCount = newPageCount;
-      this.aplicarFiltros(); // Reaplica los filtros después de cambiar de página
+      this.aplicarFiltros();
     }
   }
 
