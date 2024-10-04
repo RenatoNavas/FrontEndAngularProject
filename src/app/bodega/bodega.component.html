@@ -47,7 +47,7 @@
     <p-dialog header="Eliminar Bodega" [(visible)]="displayDialogEliminar" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
         <div class="p-fluid">
             <p>¿Deseas eliminar esta bodega? Selecciona otra bodega para reasignar los productos.</p>
-            <p-dropdown [(ngModel)]="nuevaBodegaId" [options]="bodegasReasignar" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega"></p-dropdown>
+            <p-dropdown [(ngModel)]="nuevaBodegaId" [options]="bodegasReasignar" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega" style="width: 100%;" appendTo="body"></p-dropdown>
         </div>
         <p-footer>
             <button pButton label="Eliminar" icon="pi pi-check" (click)="eliminarBodega()" class="p-button-danger"></button>

@@ -72,11 +72,11 @@
           </div>
           <div class="p-field">
             <label for="fechaIngreso">Fecha de Ingreso</label>
-            <p-calendar id="fechaIngreso" [(ngModel)]="productoSeleccionado.fechaIngreso" dateFormat="dd/mm/yy" placeholder="Seleccione una fecha" styleClass="w-100"></p-calendar>
+            <p-calendar id="fechaIngreso" [(ngModel)]="productoSeleccionado.fechaIngreso" dateFormat="dd/mm/yy" placeholder="Seleccione una fecha" style="width: 100%;" appendTo="body"></p-calendar>
           </div>
           <div class="p-field">
             <label for="bodega">Bodega</label>
-            <p-dropdown id="bodega" [(ngModel)]="productoSeleccionado.bodegaId" [options]="bodegas" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega" class="w-100"></p-dropdown>
+            <p-dropdown id="bodega" [(ngModel)]="productoSeleccionado.bodegaId" [options]="bodegas" optionLabel="nombre" optionValue="id" placeholder="Seleccione una bodega" class="w-100" style="width: 100%;" appendTo="body"></p-dropdown>
           </div>
         </div>
         <p-footer>
